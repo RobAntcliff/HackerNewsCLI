@@ -19,7 +19,7 @@ namespace HackerNewsProjectTests
         [Fact]
         public void Given_RequestForTopHackerNewsStories_When_RequestIsMade_Then_JsonArrayOfTopStoriesReturned()
         {
-            
+            var data = HackerNewsAPI.GetTopHackerNewsStories();
         }
 
         [Fact]

@@ -5,8 +5,10 @@ namespace HackerNewsProject
 {
     public class HackerNews
     {      
-        public string HelloWorld()
-        {
+        public string HelloWorld()        {
+
+            //var teat2 = HackerNewsAPI.GetTopHackerNewsStories();
+
             return "Hello World!";
         }
     }
