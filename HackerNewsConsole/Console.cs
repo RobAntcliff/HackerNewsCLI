@@ -9,7 +9,9 @@ namespace HackerNewsProject
         {
             var generator = new HackerNews();
 
-            var jsonToReturn = await generator.GetXNumberOfTopHackerNewsPosts(10);
+            string[] jsonToReturn = await generator.GetXNumberOfTopHackerNewsPosts(20);
+
+            Array.ForEach(jsonToReturn, Console.WriteLine);
         }
     }
 }

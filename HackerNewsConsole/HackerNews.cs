@@ -8,18 +8,64 @@ namespace HackerNewsProject
 {
     public class HackerNews
     {
-        public async Task<string> GetXNumberOfTopHackerNewsPosts(int numberOfPosts){
-            string JsonToReturn = "";
+        public async Task<string[]> GetXNumberOfTopHackerNewsPosts(int numberOfPosts){
 
             var data = await HackerNewsAPI.GetTopHackerNewsStoryIds();
 
-            List<int> storyIds = parseListOfStoryIdsFromJson(data, 100);
+            List<int> storyIds = parseListOfStoryIdsFromJson(data, numberOfPosts);
 
-            //foreach(int id in storyIds){
-            //    HackerNewsAPI.GetHackerNewsStoriesById(id);
-           // }
+            string[] storyInfo = await GetStoriesBasedOnStoryIds(storyIds);
 
-            return JsonToReturn;
+            return storyInfo;
+        }
+
+        static async Task<string[]> GetStoriesBasedOnStoryIds(List<int> storyIds){
+            JObject objectToReturn = new JObject();
+
+            int rank = 0;
+
+            List<Task<string>> listOfTasks = new List<Task<string>>();
+
+            //We want to be doing the async tasks in parallel here because doing it serially would be slow
+            //https://medium.com/@t.masonbarneydev/iterating-asynchronously-how-to-use-async-await-with-foreach-in-c-d7e6d21f89fa
+            foreach(int id in storyIds){
+                rank++;
+                listOfTasks.Add(GetStoryBasedOnStoryIdAndRank(id, rank));
+            }
+
+            string[] storyItemObjects = await Task.WhenAll<string>(listOfTasks);
+
+            return storyItemObjects;
+        }
+
+        static async Task<string> GetStoryBasedOnStoryIdAndRank(int storyId, int rank){
+
+            //Get the story information
+            string json = await HackerNewsAPI.GetHackerNewsStoriesById(storyId);           
+
+            JObject storyInfo = (JObject)JsonConvert.DeserializeObject(json);
+
+            StoryInfo hnInfo = new StoryInfo();
+            hnInfo.Title = storyInfo.GetValue("title").ToString();
+            hnInfo.Uri = storyInfo.GetValue("url").ToString();
+            hnInfo.Author = storyInfo.GetValue("by").ToString();
+            hnInfo.Points = storyInfo.GetValue("score").ToString();
+            hnInfo.comments = storyInfo.GetValue("descendants").ToString();
+            hnInfo.rank = rank;
+
+            // Convert DtoryInfo object to JOSN string format   
+            string jsonData = JsonConvert.SerializeObject(hnInfo); 
+
+            return jsonData;
+        }
+
+        public class StoryInfo{
+            public string Title { get; set; }
+            public string Uri { get; set; }
+            public string Author { get; set; }
+            public string Points { get; set; }
+            public string comments { get; set; }
+            public int rank { get; set; }
         }
 
         static List<int> parseListOfStoryIdsFromJson(string json, int numberOfIdsToParse){
