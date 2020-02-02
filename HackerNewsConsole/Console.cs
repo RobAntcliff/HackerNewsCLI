@@ -9,7 +9,11 @@ namespace HackerNewsProject
         {
             var generator = new HackerNewsAPI();
 
-            var data = await HackerNewsAPI.GetTopHackerNewsStories();      
+            var data = await HackerNewsAPI.GetTopHackerNewsStories();   
+
+            var data2 = await HackerNewsAPI.GetHackerNewsStoriesById(8863);   
+
+            Console.WriteLine(data2);
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Xunit;
 using HackerNewsProject;
 
@@ -17,9 +18,11 @@ namespace HackerNewsProjectTests
         }
 
         [Fact]
-        public void Given_RequestForTopHackerNewsStories_When_RequestIsMade_Then_JsonArrayOfTopStoriesReturned()
+        public async void Given_RequestForTopHackerNewsStories_When_RequestIsMade_Then_JsonArrayOfTopStoriesReturned()
         {
-            var data = HackerNewsAPI.GetTopHackerNewsStories();
+            var data = await HackerNewsAPI.GetTopHackerNewsStories();
+
+            Assert.NotEmpty(data);
         }
 
         [Fact]
@@ -29,9 +32,19 @@ namespace HackerNewsProjectTests
         }
 
         [Fact]
-        public void Given_RequestForStoryItem_When_RequestIsMade_Then_StoryItemJsonReturned()
+        public async void Given_RequestForStoryItem_When_RequestIsMade_Then_StoryItemJsonReturned()
         {
-            
+            var data = await HackerNewsAPI.GetHackerNewsStoriesById(8863);
+
+            String expected = "";
+
+            using (StreamReader sr = new StreamReader(@"..\..\..\..\HackerNewsConsoleTests/Resources/id8863.txt"))
+            {
+            // Read the stream to a string, and write the string to the console.
+                expected = sr.ReadToEnd();
+            }
+
+            Assert.Equal(expected, data.ToString());
         }
 
         [Fact]
