@@ -7,13 +7,9 @@ namespace HackerNewsProject
     {
         static async Task Main(string[] args)
         {
-            var generator = new HackerNewsAPI();
+            var generator = new HackerNews();
 
-            var data = await HackerNewsAPI.GetTopHackerNewsStories();   
-
-            var data2 = await HackerNewsAPI.GetHackerNewsStoriesById(8863);   
-
-            Console.WriteLine(data2);
+            var jsonToReturn = await generator.GetXNumberOfTopHackerNewsPosts(10);
         }
     }
 }

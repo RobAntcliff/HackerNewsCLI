@@ -8,19 +8,9 @@ namespace HackerNewsProjectTests
     public class HackerNewsAPITests
     {
         [Fact]
-        public void Test1()
-        {
-            var hnAPI = new HackerNewsAPI();
-            string expected = "Hello World!";
-            string actual = hnAPI.HelloWorld();
-
-            Assert.Equal(expected, actual);
-        }
-
-        [Fact]
         public async void Given_RequestForTopHackerNewsStories_When_RequestIsMade_Then_JsonArrayOfTopStoriesReturned()
         {
-            var data = await HackerNewsAPI.GetTopHackerNewsStories();
+            var data = await HackerNewsAPI.GetTopHackerNewsStoryIds();
 
             Assert.NotEmpty(data);
         }

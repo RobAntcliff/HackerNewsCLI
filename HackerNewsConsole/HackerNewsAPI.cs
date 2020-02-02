@@ -9,15 +9,9 @@ using System.Threading.Tasks;
 namespace HackerNewsProject
 {
     public class HackerNewsAPI
-    {       
-        public string HelloWorld()
+    {
+        public static async Task<string> GetTopHackerNewsStoryIds()
         {
-            return "Hello World!";
-        }
-        public static async Task<string> GetTopHackerNewsStories()
-        {
-            //string url = "https://hacker-news.firebaseio.com/v0/topstories.json";
-
             var httpClient = HttpClientFactory.Create();
 
              string data = "";
@@ -39,8 +33,6 @@ namespace HackerNewsProject
 
         public static async Task<string> GetHackerNewsStoriesById(int storyId)
         {
-            //string url = "https://hacker-news.firebaseio.com/v0/topstories.json";
-
             var httpClient = HttpClientFactory.Create();
 
              string data = "";
