@@ -54,7 +54,7 @@ namespace HackerNewsProject
             hnInfo.rank = rank;
 
             // Convert DtoryInfo object to JOSN string format   
-            string jsonData = JsonConvert.SerializeObject(hnInfo); 
+            string jsonData = JsonConvert.SerializeObject(hnInfo, Formatting.Indented); 
 
             return jsonData;
         }

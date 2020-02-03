@@ -7,11 +7,28 @@ namespace HackerNewsProject
     {
         static async Task Main(string[] args)
         {
-            var generator = new HackerNews();
+            int position = Array.IndexOf(args, "--posts");
 
-            string[] jsonToReturn = await generator.GetXNumberOfTopHackerNewsPosts(20);
+            //check if --posts is in arguments
+            if(position > -1)
+            {
+                //Check that there's in integer for number of posts
+                if(args[position + 1] != null 
+                && int.TryParse(args[position + 1], out int result)){
+                    //
+                    if(result > 0 && result < 101){
+                        var generator = new HackerNews();
 
-            Array.ForEach(jsonToReturn, Console.WriteLine);
+                        string[] jsonToReturn = await generator.GetXNumberOfTopHackerNewsPosts(20);
+
+                        Array.ForEach(jsonToReturn, Console.WriteLine);
+                    }                    
+                }                
+            } else {
+                Console.WriteLine("Please pass in arguments in the format --posts <number of posts you want to see>");
+            }
+
+           
         }
     }
 }
