@@ -29,3 +29,7 @@ This is a command line program that gets hacker news posts and returns them in t
 - Run the program using the command ```dotnet run --posts 10``` and that will give you the first 10 posts on hacker news in the console.
 
 -To Run tests, go to the HackerNewsConsoleTests directory in the terminal and run ```dotnet tests```
+
+**TODO:**
+- Write more tests using Moq so that I don't have to make requests when Unit testing. https://github.com/Moq/moq4/wiki/Quickstart
+- Setup with docker. It would be great if Windows didn't require you to have Windows 10 Pro to download the Docker Decktop app though.
