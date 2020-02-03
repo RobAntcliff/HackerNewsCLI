@@ -19,9 +19,9 @@ namespace HackerNewsProject
                     if(result > 0 && result < 101){
                         var generator = new HackerNews();
 
-                        string[] jsonToReturn = await generator.GetXNumberOfTopHackerNewsPosts(20);
+                        string jsonToReturn = await generator.GetXNumberOfTopHackerNewsPosts(result);
 
-                        Array.ForEach(jsonToReturn, Console.WriteLine);
+                        Console.WriteLine(jsonToReturn);
                     }                    
                 }                
             } else {
