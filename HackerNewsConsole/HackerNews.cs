@@ -8,23 +8,23 @@ namespace HackerNewsProject
 {
     public class HackerNews
     {
-        public async Task<string[]> GetXNumberOfTopHackerNewsPosts(int numberOfPosts){
+        public async Task<string> GetXNumberOfTopHackerNewsPosts(int numberOfPosts){
 
             var data = await HackerNewsAPI.GetTopHackerNewsStoryIds();
 
             List<int> storyIds = parseListOfStoryIdsFromJson(data, numberOfPosts);
 
-            string[] storyInfo = await GetStoriesBasedOnStoryIds(storyIds);
+            string storyInfo = await GetStoriesBasedOnStoryIds(storyIds);
 
             return storyInfo;
         }
 
-        static async Task<string[]> GetStoriesBasedOnStoryIds(List<int> storyIds){
+        static async Task<string> GetStoriesBasedOnStoryIds(List<int> storyIds){
             JObject objectToReturn = new JObject();
 
             int rank = 0;
 
-            List<Task<string>> listOfTasks = new List<Task<string>>();
+            List<Task<StoryInfo>> listOfTasks = new List<Task<StoryInfo>>();
 
             //We want to be doing the async tasks in parallel here because doing it serially would be slow
             //https://medium.com/@t.masonbarneydev/iterating-asynchronously-how-to-use-async-await-with-foreach-in-c-d7e6d21f89fa
@@ -33,30 +33,100 @@ namespace HackerNewsProject
                 listOfTasks.Add(GetStoryBasedOnStoryIdAndRank(id, rank));
             }
 
-            string[] storyItemObjects = await Task.WhenAll<string>(listOfTasks);
+            StoryInfo[] storyItemObjects = await Task.WhenAll<StoryInfo>(listOfTasks);
 
-            return storyItemObjects;
+            string jsonData = JsonConvert.SerializeObject(storyItemObjects, Formatting.Indented); 
+
+            return jsonData;
         }
 
-        static async Task<string> GetStoryBasedOnStoryIdAndRank(int storyId, int rank){
+        static async Task<StoryInfo> GetStoryBasedOnStoryIdAndRank(int storyId, int rank){
 
             //Get the story information
             string json = await HackerNewsAPI.GetHackerNewsStoriesById(storyId);           
 
             JObject storyInfo = (JObject)JsonConvert.DeserializeObject(json);
 
+            //Title
             StoryInfo hnInfo = new StoryInfo();
-            hnInfo.Title = storyInfo.GetValue("title").ToString();
-            hnInfo.Uri = storyInfo.GetValue("url").ToString();
-            hnInfo.Author = storyInfo.GetValue("by").ToString();
-            hnInfo.Points = storyInfo.GetValue("score").ToString();
-            hnInfo.comments = storyInfo.GetValue("descendants").ToString();
-            hnInfo.rank = rank;
+            if(storyInfo.GetValue("title") != null){
+                string title = storyInfo.GetValue("title").ToString();
+
+                //Check if title is non-empty string
+                if(!String.IsNullOrEmpty(title)){
+                    hnInfo.Title = title;
+                } else{
+                    hnInfo.Title = "No Title Available";
+                }                
+            }
+
+            //Uri        
+            if(storyInfo.GetValue("url") != null){
+                hnInfo.Uri = storyInfo.GetValue("url").ToString();
+
+                //Check if URL is valid
+                Uri uriResult;
+                bool result = Uri.TryCreate(hnInfo.Uri, UriKind.Absolute, out uriResult) 
+                    && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+                if(!result){
+                    hnInfo.Uri = hnInfo.Uri + " (Invalid Uri)";
+                }
+
+            }
+
+            //Author
+            if(storyInfo.GetValue("by") != null){
+                string author = storyInfo.GetValue("by").ToString();
+
+                //Check if Author is non-empty string
+                if(!String.IsNullOrEmpty(author)){
+                    hnInfo.Author = author;
+                } else {
+                    hnInfo.Author = "No Author Available";
+                }
+            }
+
+            //Points
+            if(storyInfo.GetValue("score") != null){
+                string score = storyInfo.GetValue("score").ToString();
+
+                //Check if greater or equal to zero
+                bool isInt = int.TryParse(score, out int intScore);
+                if(isInt && intScore >= 0){
+                    hnInfo.Points = score;
+                } else {
+                    hnInfo.Points = "No score available";
+                }
+                
+            }
+
+            //Comments
+            if(storyInfo.GetValue("descendants") != null){
+                string comments = storyInfo.GetValue("descendants").ToString();
+
+                //Check if greater or equal to zero
+                bool isInt = int.TryParse(comments, out int intComments);
+                if(isInt && intComments >= 0){
+                    hnInfo.comments = comments;
+                } else {
+                    hnInfo.comments = "No comment info available";
+                }
+            }
+            
+            //Rank
+            //Check if greater or equal to zero
+            if(rank >= 0){
+                hnInfo.rank = rank.ToString();
+            } else {
+                hnInfo.rank = "No Rank Info Available";
+            }
+            
 
             // Convert DtoryInfo object to JOSN string format   
-            string jsonData = JsonConvert.SerializeObject(hnInfo, Formatting.Indented); 
+            //string jsonData = JsonConvert.SerializeObject(hnInfo, Formatting.Indented); 
 
-            return jsonData;
+            return hnInfo;
         }
 
         public class StoryInfo{
@@ -65,7 +135,7 @@ namespace HackerNewsProject
             public string Author { get; set; }
             public string Points { get; set; }
             public string comments { get; set; }
-            public int rank { get; set; }
+            public string rank { get; set; }
         }
 
         static List<int> parseListOfStoryIdsFromJson(string json, int numberOfIdsToParse){
