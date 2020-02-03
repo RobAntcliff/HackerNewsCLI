@@ -8,6 +8,9 @@ namespace HackerNewsProject
 {
     public class HackerNews
     {
+        /// <summary>Get the top posts from hackernews.com in json string format</summary>
+        /// <param name="numberOfPosts">Number of posts you want to get (0 > posts < 101)</param>
+        /// <returns>a string containing the number of posts specified in a json format</returns>
         public async Task<string> GetXNumberOfTopHackerNewsPosts(int numberOfPosts){
 
             var data = await HackerNewsAPI.GetTopHackerNewsStoryIds();
@@ -19,9 +22,13 @@ namespace HackerNewsProject
             return storyInfo;
         }
 
+        /// <summary>Get posts from hn based on a list of post Ids</summary>
+        /// <param name="storyIds">List of post Ids</param>
+        /// <returns>a string containing the posts specified in a json format</returns>
         static async Task<string> GetStoriesBasedOnStoryIds(List<int> storyIds){
             JObject objectToReturn = new JObject();
 
+            //Will use this variable to add the rank to the story objects
             int rank = 0;
 
             List<Task<StoryInfo>> listOfTasks = new List<Task<StoryInfo>>();
@@ -40,6 +47,10 @@ namespace HackerNewsProject
             return jsonData;
         }
 
+        /// <summary>Get a single story from hacker news based on the id</summary>
+        /// <param name="storyIds">hacker news post Id</param>
+        /// <param name="rank">the rank at which the story is on hacker news</param>
+        /// <returns>A StoryInfo object with fields containing info about the story</returns>
         static async Task<StoryInfo> GetStoryBasedOnStoryIdAndRank(int storyId, int rank){
 
             //Get the story information
@@ -129,6 +140,7 @@ namespace HackerNewsProject
             return hnInfo;
         }
 
+        /// <summary>Object representing a hacker news story</summary>
         public class StoryInfo{
             public string Title { get; set; }
             public string Uri { get; set; }
@@ -138,6 +150,10 @@ namespace HackerNewsProject
             public string rank { get; set; }
         }
 
+        /// <summary>Makes a list of Hacker News story Id the length of however many the user has specified</summary>
+        /// <param name="json">json list of hacker news post Ids</param>
+        /// <param name="numberOfIdsToParse">the number of stories that the user has specified for the program to return</param>
+        /// <returns>A list of rank order hacker news story ids with the same number that the user requested</returns>
         static List<int> parseListOfStoryIdsFromJson(string json, int numberOfIdsToParse){
             JArray idsJsonArray = JArray.Parse(json);   
 

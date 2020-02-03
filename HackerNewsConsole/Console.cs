@@ -26,9 +26,7 @@ namespace HackerNewsProject
                 }                
             } else {
                 Console.WriteLine("Please pass in arguments in the format --posts <number of posts you want to see>");
-            }
-
-           
+            }           
         }
     }
 }
