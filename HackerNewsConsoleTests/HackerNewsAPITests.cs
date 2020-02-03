@@ -16,12 +16,6 @@ namespace HackerNewsProjectTests
         }
 
         [Fact]
-        public void Given_MalformedTopHackerNewsStoryRequest_When_RequestIsMade_Then_EmptyJsonShouldBeReturned()
-        {
-            
-        }
-
-        [Fact]
         public async void Given_RequestForStoryItem_When_RequestIsMade_Then_StoryItemJsonReturned()
         {
             var data = await HackerNewsAPI.GetHackerNewsStoriesById(8863);
@@ -38,9 +32,13 @@ namespace HackerNewsProjectTests
         }
 
         [Fact]
-        public void Given_MalformedStoryItemRequest_When_RequestIsMade_Then_EmptyJsonShouldBeReturned()
+        public async void Given_IncorrectIdParameter_When_RequestIsMade_Then_EmptyJsonShouldBeReturned()
         {
-            
+            var data = await HackerNewsAPI.GetHackerNewsStoriesById(-1);
+
+            String expected = "";
+
+            Assert.Equal(expected, data.ToString());
         }
     }
 }

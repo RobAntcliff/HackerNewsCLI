@@ -13,11 +13,17 @@ namespace HackerNewsProject
         /// <returns>a string containing the number of posts specified in a json format</returns>
         public async Task<string> GetXNumberOfTopHackerNewsPosts(int numberOfPosts){
 
-            var data = await HackerNewsAPI.GetTopHackerNewsStoryIds();
+            string storyInfo = "";
 
-            List<int> storyIds = parseListOfStoryIdsFromJson(data, numberOfPosts);
+            if(numberOfPosts > 0 && numberOfPosts < 101){
+                var data = await HackerNewsAPI.GetTopHackerNewsStoryIds();
 
-            string storyInfo = await GetStoriesBasedOnStoryIds(storyIds);
+                List<int> storyIds = parseListOfStoryIdsFromJson(data, numberOfPosts);
+
+                storyInfo = await GetStoriesBasedOnStoryIds(storyIds);
+            } else {
+                storyInfo = "Number of posts specified is out of bounds. Please enter a value between 0 and 100";
+            }         
 
             return storyInfo;
         }
