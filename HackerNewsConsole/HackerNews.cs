@@ -70,11 +70,13 @@ namespace HackerNewsProject
                 string title = storyInfo.GetValue("title").ToString();
 
                 //Check if title is non-empty string
-                if(!String.IsNullOrEmpty(title)){
+                if(!String.IsNullOrEmpty(title) && title.Length < 257){
                     hnInfo.Title = title;
-                } else{
+                } else if(title.Length > 256){
+                    hnInfo.Title = "Title too long";
+                } else {
                     hnInfo.Title = "No Title Available";
-                }                
+                }            
             }
 
             //Uri        
@@ -97,8 +99,10 @@ namespace HackerNewsProject
                 string author = storyInfo.GetValue("by").ToString();
 
                 //Check if Author is non-empty string
-                if(!String.IsNullOrEmpty(author)){
+                if(!String.IsNullOrEmpty(author) && author.Length < 257){
                     hnInfo.Author = author;
+                } else if (author.Length > 257) {
+                    hnInfo.Author = "Author name too long";
                 } else {
                     hnInfo.Author = "No Author Available";
                 }
